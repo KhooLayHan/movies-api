@@ -3,9 +3,9 @@ services:
     image: postgres:17.6-trixie
     container_name: movies-db
     environment:
-      POSTGRES_DB: movies
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - ./data:/var/lib/postgresql/data
     ports:
