@@ -27,7 +27,7 @@ jobs:
           # Specify the version of Go to use. It's good practice to match this
           # with the version in your go.mod file.
           go-version-file: go.mod
-          cache-dependency-path: ././go.sum
+          cache-dependency-path: go.sum
 
       # Step 3: Run the linter.
       # This uses the official golangci-lint GitHub Action, which is optimized for CI.
