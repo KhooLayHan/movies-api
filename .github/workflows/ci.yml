@@ -45,4 +45,4 @@ jobs:
 
       # Step 5: (Optional but recommended) Ensure the application builds.
       - name: Build application
-        run: go build -v ./cmd/api/main.go
+        run: go build -v ./cmd/api/
