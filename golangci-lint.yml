@@ -1,4 +1,3 @@
-# File: .golangci.yml
 # A modified version of the Maratori "golden config", tuned for a learning project.
 
 version: "2"
@@ -65,7 +64,7 @@ linters:
 linters-settings:
   # CRITICAL: You must change this to your project's module path!
   goimports:
-    local-prefixes: github.com/your-username/movies-api
+    local-prefixes: github.com/KhooLayHan/movies-api
 
   depguard:
     rules:

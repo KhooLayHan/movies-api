@@ -1,0 +1,47 @@
+name: CI
+
+# This workflow will run on every push to the 'main' branch
+# and on every pull request that targets the 'main' branch.
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  # Define a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Define the steps that the job will execute
+    steps:
+      # Step 1: Check out your repository code so the workflow can access it.
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      # Step 2: Set up the Go environment.
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          # Specify the version of Go to use. It's good practice to match this
+          # with the version in your go.mod file.
+          go-version-file: go.mod
+
+      # Step 3: Run the linter.
+      # This uses the official golangci-lint GitHub Action, which is optimized for CI.
+      # It will automatically use our .golangci.yml config file.
+      - name: Run linter
+        uses: golangci/golangci-lint-action@v8
+        with:
+          # We can specify the version of golangci-lint to use.
+          version: v2.1.0
+
+      # Step 4: Run tests. We haven't written any tests yet, but this is a
+      # critical step to have in place for when we do.
+      # - name: Run tests
+      #   run: go test -v ./...
+
+      # Step 5: (Optional but recommended) Ensure the application builds.
+      - name: Build application
+        run: go build -v ./cmd/api/main.go
