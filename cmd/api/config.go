@@ -48,9 +48,6 @@ func LoadConfig() (Config, error) {
 	dbName := os.Getenv("DB_NAME")
 
 	cfg.DB.DSN = fmt.Sprintf("%s://%s:%s@%s:%s/%s?sslmode=disable", dbConnection, dbUser, dbPassword, dbHost, dbPort, dbName)
-
-	fmt.Println(cfg.DB.DSN)
-
 	if cfg.DB.DSN == "" {
 		log.Fatal("DB_DSN environment variable not set")
 		return Config{}, err
