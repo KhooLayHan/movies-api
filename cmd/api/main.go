@@ -7,21 +7,19 @@ import (
 )
 
 func main() {
-	// Simple handler function for the root path "/"
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		_, err := fmt.Fprintf(w, "Hello, World!")
-		if err != nil {
-			log.Printf("Error writing response: %v", err)
-		}
-	})
+	mux := http.NewServeMux()
 
-	// Server port to listen on
+	// Register the healthcheck handler for the "/v1/healthcheck" route.
+	mux.HandleFunc("/v1/healthcheck", healthCheckHandler)
+
+	// Server port to listen on.
 	port := 4040
 
 	// Print a message indicating the server is starting
 	log.Printf("Starting server on port %d", port)
 
-	err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
+	// Start the HTTP server with our server mux.
+	err := http.ListenAndServe(fmt.Sprintf(":%d", port), mux)
 	if err != nil {
 		log.Fatal(err)
 	}
