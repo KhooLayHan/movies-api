@@ -35,7 +35,7 @@ jobs:
         uses: golangci/golangci-lint-action@v8
         with:
           # We can specify the version of golangci-lint to use.
-          version: v2.1.0
+          version: v2.5.0
 
       # Step 4: Run tests. We haven't written any tests yet, but this is a
       # critical step to have in place for when we do.
