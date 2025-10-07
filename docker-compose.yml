@@ -1,0 +1,12 @@
+services:
+  postgres:
+    image: postgres:17.6-trixie
+    container_name: movies-db
+    environment:
+      POSTGRES_DB: movies
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
