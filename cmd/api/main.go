@@ -8,12 +8,22 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
+// application struct to hold application-wide state
+type application struct {
+	// Any dependencies required by the application
+}
+
 func main() {
+	// Initialize the application struct
+	app := &application{}
+
 	// Initialize the chi router.
 	router := chi.NewRouter()
 
 	// Register the healthcheck handler for the "/v1/healthcheck" route.
-	router.Get("/v1/healthcheck", healthCheckHandler)
+	router.Get("/v1/healthcheck", app.healthCheckHandler)
+	router.Post("/v1/healthcheck", app.createMovieHandler)
+	router.Get("/v1/healthcheck/{id}", app.getMovieHandler)
 
 	// Server port to listen on.
 	port := 4040

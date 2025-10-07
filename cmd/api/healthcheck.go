@@ -7,7 +7,7 @@ import (
 
 // healthCheckHandler writes a plain-text response indicating the status of the API
 // with information about the application status, operating environment, and version.
-func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
+func (app *application) healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 	// Create a map to hold our healthcheck data
 	data := map[string]string{
 		"status":      "available",
