@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/KhooLayHan/movies-api/internal/repository"
 	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -14,7 +15,13 @@ import (
 // application struct to hold application-wide state
 type application struct {
 	config Config
-	db     *pgxpool.Pool
+	// db     *pgxpool.Pool
+	models Models
+}
+
+// Models struct to hold our repository models
+type Models struct {
+	Movies repository.MovieRepository
 }
 
 func main() {
@@ -37,7 +44,10 @@ func main() {
 	// Initialize the application struct.
 	app := &application{
 		config: cfg,
-		db:     db,
+		// db:     db,
+		models: Models{
+			Movies: repository.NewMovieRepository(db),
+		},
 	}
 
 	// Initialize the chi router.
