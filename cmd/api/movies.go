@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"time"
 
-	"github.com/KhooLayHan/movies-api/internal/domain"
+	"github.com/KhooLayHan/movies-api/internal/repository/postgres"
 	"github.com/go-chi/chi/v5"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 // createMovieHandler handles the "POST /v1/movies" endpoint.
@@ -28,14 +28,14 @@ func (app *application) getMovieHandler(w http.ResponseWriter, r *http.Request) 
 	}
 
 	// Creates a dummy movie for now
-	movie := domain.Movie{
+	movie := postgres.Movie{
 		ID:        id,
 		Title:     "Casablanca",
 		Year:      1942,
 		Runtime:   102,
 		Genres:    []string{"drama", "romance", "war"},
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		CreatedAt: pgtype.Timestamp{},
+		UpdatedAt: pgtype.Timestamp{},
 	}
 
 	// Uses the new helper to write the JSON response
