@@ -12,7 +12,7 @@ type envelope map[string]any
 // writeJSON is a helper function for sending JSON responses.
 // It takes the destination http.ResponseWriter, the HTTP status code, the data to encode,
 // and a header map.
-func writeJSON(w http.ResponseWriter, status int, data envelope, headers http.Header) error {
+func (app *application) writeJSON(w http.ResponseWriter, status int, data envelope, headers http.Header) error {
 	js, err := json.MarshalIndent(data, "", "\t")
 	if err != nil {
 		return err

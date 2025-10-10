@@ -1,19 +1,58 @@
 package main
 
 import (
-	"fmt"
+	"errors"
 	"net/http"
 	"strconv"
 
 	"github.com/KhooLayHan/movies-api/internal/repository/postgres"
+	"github.com/KhooLayHan/movies-api/internal/validator"
 	"github.com/go-chi/chi/v5"
-	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/jackc/pgx/v5"
 )
 
 // createMovieHandler handles the "POST /v1/movies" endpoint.
 func (app *application) createMovieHandler(w http.ResponseWriter, r *http.Request) {
-	if _, err := fmt.Fprintf(w, "create a new movie"); err != nil {
-		http.Error(w, "Not implemented", http.StatusNotImplemented)
+	var input struct {
+		Title   string   `json:"title"`
+		Year    int32    `json:"year"`
+		Runtime int32    `json:"runtime"`
+		Genres  []string `json:"genres"`
+	}
+
+	err := app.readJSON(w, r, &input)
+	if err != nil {
+		http.Error(w, "Bad Request", http.StatusBadRequest)
+		return
+	}
+
+	// Basic validation
+	v := validator.New()
+	v.Check(input.Title != "", "title", "must be provided")
+	v.Check(input.Year != 0, "year", "must be provided")
+	// v.Check(input.Runtime != 0, "runtime", "must be provided")
+	// v.Check(input.Genres != nil, "genres", "must be provided")
+
+	if !v.Valid() {
+		http.Error(w, "Validation Error", http.StatusUnprocessableEntity)
+		return
+	}
+
+	params := postgres.CreateMovieParams{
+		Title:   input.Title,
+		Year:    input.Year,
+		Runtime: input.Runtime,
+		Genres:  input.Genres,
+	}
+
+	movie, err := app.models.Movies.Create(r.Context(), params)
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	if err := app.writeJSON(w, http.StatusCreated, envelope{"movie": movie}, nil); err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 }
@@ -27,20 +66,18 @@ func (app *application) getMovieHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	// Creates a dummy movie for now
-	movie := postgres.Movie{
-		ID:        id,
-		Title:     "Casablanca",
-		Year:      1942,
-		Runtime:   102,
-		Genres:    []string{"drama", "romance", "war"},
-		CreatedAt: pgtype.Timestamp{},
-		UpdatedAt: pgtype.Timestamp{},
+	movie, err := app.models.Movies.Get(r.Context(), id)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			http.Error(w, "Not Found", http.StatusNotFound)
+		} else {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		}
+		return
 	}
 
-	// Uses the new helper to write the JSON response
-	err = writeJSON(w, http.StatusOK, envelope{"movie": movie}, nil)
-	if err != nil {
+	// Uses the new helper to write the JSON response\
+	if err := app.writeJSON(w, http.StatusOK, envelope{"movie": movie}, nil); err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}

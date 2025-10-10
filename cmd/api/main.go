@@ -55,8 +55,8 @@ func main() {
 
 	// Register the healthcheck handler for the "/v1/healthcheck" route.
 	router.Get("/v1/healthcheck", app.healthCheckHandler)
-	router.Post("/v1/healthcheck", app.createMovieHandler)
-	router.Get("/v1/healthcheck/{id}", app.getMovieHandler)
+	router.Post("/v1/movies", app.createMovieHandler)
+	router.Get("/v1/movies/{id}", app.getMovieHandler)
 
 	// Server port to listen on.
 	port := 4040
