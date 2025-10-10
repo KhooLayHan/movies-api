@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/joho/godotenv"
 )
@@ -12,8 +13,12 @@ import (
 // Config represents the configuration for the application.
 type Config struct {
 	Port int
+	Env  string // To store the application environment (e.g. "development", "staging", and "production")
 	DB   struct {
-		DSN string
+		DSN          string
+		MaxOpenConns int
+		MaxIdleConns int
+		MaxIdleTime  time.Duration
 	}
 }
 
