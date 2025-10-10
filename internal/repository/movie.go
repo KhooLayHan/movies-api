@@ -37,3 +37,13 @@ func (r *PostgresMovieRepo) Create(ctx context.Context, params postgres.CreateMo
 func (r *PostgresMovieRepo) Get(ctx context.Context, id int64) (postgres.Movie, error) {
 	return r.DB.GetMovie(ctx, id)
 }
+
+// Update implements the MovieRepository interface.
+func (r *PostgresMovieRepo) Update(ctx context.Context, params postgres.UpdateMovieParams) (postgres.UpdateMovieRow, error) {
+	return r.DB.UpdateMovie(ctx, params)
+}
+
+// Delete implements the MovieRepository interface.
+func (r *PostgresMovieRepo) Delete(ctx context.Context, id int64) error {
+	return r.DB.DeleteMovie(ctx, id)
+}
