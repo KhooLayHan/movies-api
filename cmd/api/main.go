@@ -57,6 +57,8 @@ func main() {
 	router.Get("/v1/healthcheck", app.healthCheckHandler)
 	router.Post("/v1/movies", app.createMovieHandler)
 	router.Get("/v1/movies/{id}", app.getMovieHandler)
+	router.Patch("/v1/movies/{id}", app.updateMovieHandler)
+	router.Delete("/v1/movies/{id}", app.deleteMovieHandler)
 
 	// Server port to listen on.
 	port := 4040
