@@ -1,14 +1,17 @@
 package repository
 
 import (
+	"context"
+
 	"github.com/KhooLayHan/movies-api/internal/repository/postgres"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 // MovieRepository interface defines the methods for interacting with movie data.
 type MovieRepository interface {
-	// GetMovie(ctx context.Context, id int) (*Movie, error)
-	// CreateMovie(ctx context.Context, movie *Movie) error
+	Create(ctx context.Context, params postgres.CreateMovieParams) (postgres.CreateMovieRow, error)
+	Get(ctx context.Context, id int64) (postgres.Movie, error)
+
 	// UpdateMovie(ctx context.Context, id int, movie *Movie) error
 	// DeleteMovie(ctx context.Context, id int) error
 }
@@ -23,4 +26,14 @@ func NewMovieRepository(db *pgxpool.Pool) *PostgresMovieRepo {
 	return &PostgresMovieRepo{
 		DB: postgres.New(db),
 	}
+}
+
+// Create implements the MovieRepository interface.
+func (r *PostgresMovieRepo) Create(ctx context.Context, params postgres.CreateMovieParams) (postgres.CreateMovieRow, error) {
+	return r.DB.CreateMovie(ctx, params)
+}
+
+// Get implements the MovieRepository interface.
+func (r *PostgresMovieRepo) Get(ctx context.Context, id int64) (postgres.Movie, error) {
+	return r.DB.GetMovie(ctx, id)
 }
