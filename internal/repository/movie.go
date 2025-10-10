@@ -11,9 +11,8 @@ import (
 type MovieRepository interface {
 	Create(ctx context.Context, params postgres.CreateMovieParams) (postgres.CreateMovieRow, error)
 	Get(ctx context.Context, id int64) (postgres.Movie, error)
-
-	// UpdateMovie(ctx context.Context, id int, movie *Movie) error
-	// DeleteMovie(ctx context.Context, id int) error
+	Update(ctx context.Context, params postgres.UpdateMovieParams) (postgres.UpdateMovieRow, error)
+	Delete(ctx context.Context, id int64) error
 }
 
 // PostgresMovieRepo is the concrete implementation for PostgreSQL.
