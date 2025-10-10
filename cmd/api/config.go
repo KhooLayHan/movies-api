@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -23,7 +24,7 @@ type Config struct {
 }
 
 // LoadConfig loads the application configuration from environment variables.
-func LoadConfig() (Config, error) {
+func LoadConfig() Config {
 	// Load the .env file
 	err := godotenv.Load()
 	if err != nil {
@@ -40,7 +41,7 @@ func LoadConfig() (Config, error) {
 	port, err := strconv.Atoi(portStr)
 	if err != nil {
 		log.Fatal("Invalid API_PORT environment variable")
-		return Config{}, err
+		return Config{}
 	}
 	cfg.Port = port
 
@@ -55,8 +56,18 @@ func LoadConfig() (Config, error) {
 	cfg.DB.DSN = fmt.Sprintf("%s://%s:%s@%s:%s/%s?sslmode=disable", dbConnection, dbUser, dbPassword, dbHost, dbPort, dbName)
 	if cfg.DB.DSN == "" {
 		log.Fatal("DB_DSN environment variable not set")
-		return Config{}, err
+		return Config{}
 	}
 
-	return cfg, nil
+	// Server settings
+	flag.IntVar(&cfg.Port, "port", 4000, "API server port")
+	flag.StringVar(&cfg.Env, "env", "development", "Environment (development, staging, production)")
+
+	// Database settings
+	flag.StringVar(&cfg.DB.DSN, "db-dsn", cfg.DB.DSN, "PostgreSQL DSN")
+	flag.IntVar(&cfg.DB.MaxOpenConns, "db-max-open-conns", 25, "PostgreSQL max open connections")
+	flag.IntVar(&cfg.DB.MaxIdleConns, "db-max-idle-conns", 25, "PostgreSQL max idle connections")
+	flag.DurationVar(&cfg.DB.MaxIdleTime, "db-max-idle-time", time.Minute, "PostgreSQL max idle time")
+
+	return cfg
 }

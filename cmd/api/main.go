@@ -26,10 +26,7 @@ type Models struct {
 
 func main() {
 	// Load the configuration.
-	cfg, err := LoadConfig()
-	if err != nil {
-		log.Fatal(err)
-	}
+	cfg := LoadConfig()
 
 	// Connect to the database.
 	db, err := openDB(cfg)
@@ -39,7 +36,7 @@ func main() {
 
 	// Defers the database call so that the connection pool closes before exiting the main() function.
 	defer db.Close()
-	log.Println("Database connection pool established.")
+	log.Printf("Database connection pool established (max open conns: %d, max idle conns: %d)", cfg.DB.MaxOpenConns, cfg.DB.MaxIdleConns)
 
 	// Initialize the application struct.
 	app := &application{
@@ -81,7 +78,16 @@ func main() {
 
 // openDB creates a new connection pool for a given configuration.
 func openDB(cfg Config) (*pgxpool.Pool, error) {
-	db, err := pgxpool.New(context.Background(), cfg.DB.DSN)
+	poolConfig, err := pgxpool.ParseConfig(cfg.DB.DSN)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse database DSN: %w", err)
+	}
+
+	// Set the connection pool settings from our config
+	poolConfig.MaxConns = int32(cfg.DB.MaxOpenConns)
+	poolConfig.MaxConnIdleTime = cfg.DB.MaxIdleTime
+
+	db, err := pgxpool.NewWithConfig(context.Background(), poolConfig)
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to database: %w", err)
 	}
